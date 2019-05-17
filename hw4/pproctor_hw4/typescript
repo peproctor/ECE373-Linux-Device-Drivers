@@ -1,0 +1,30 @@
+Script started on 2019-05-14 20:54:36-0400
+osboxes@osboxes: ~/Documents/ECE373/HW4 sudo ./userspace_driver 
+[sudo] password for osboxes: 
+LEDCTL initial value: 07068302 
+LEDCTL value 1: 0x0f0e0f0e
+LEDCTL value 2: 0x0f0f0f0f
+finished first led part
+doing LED writes 
+....................
+Good packets received count: 0 
+osboxes@osboxes: ~/Documents/ECE373/HW4 sudo ./userspace_driver 
+LEDCTL initial value: 07068302 
+LEDCTL value 1: 0x0f0e0f0e
+LEDCTL value 2: 0x0f0f0f0f
+finished first led part
+doing LED writes 
+....................
+Good packets received count: 0 
+osboxes@osboxes: ~/Documents/ECE373/HW4 sudo ./userspace_driver 
+LEDCTL initial value: 07068302 
+LEDCTL value 1: 0x0f0e0f0e
+LEDCTL value 2: 0x0f0f0f0f
+finished first led part
+doing LED writes 
+....................
+Good packets received count: 0 
+osboxes@osboxes: ~/Documents/ECE373/HW4 exit
+exit
+
+Script done on 2019-05-14 20:56:09-0400

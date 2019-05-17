@@ -1,0 +1,22 @@
+Script started on 2019-04-09 14:16:55-0700
+pproctor@pproctor-MacBook: mpproctor@pproctor-MacBook pwd
+/home/pproctor
+pproctor@pproctor-MacBook: mpproctor@pproctor-MacBook ls - l[K[Kl
+total 52
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Desktop
+drwxr-xr-x  3 pproctor pproctor 4096 Apr  7 14:35 Documents
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Downloads
+-rw-r--r--  1 pproctor pproctor 8980 Apr  5 17:54 examples.desktop
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Music
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Pictures
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Public
+drwxr-xr-x  3 pproctor pproctor 4096 Apr  5 19:06 snap
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Templates
+-rw-r--r--  1 pproctor pproctor    0 Apr  9 14:16 typescript
+drwxr-xr-x  2 pproctor pproctor 4096 Apr  5 18:14 Videos
+drwxr-xr-x 11 pproctor pproctor 4096 Apr  7 10:09 vim
+pproctor@pproctor-MacBook: mpproctor@pproctor-MacBook mkdir ECE373
+pproctor@pproctor-MacBook: mpproctor@pproctor-MacBook cd ECE373
+pproctor@pproctor-MacBook: ~/ECE373[pproctor@pproctor-MacBook[~/ECE373[00m$ exit
+
+Script done on 2019-04-09 14:17:28-0700

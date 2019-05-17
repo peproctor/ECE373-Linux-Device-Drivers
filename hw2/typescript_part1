@@ -1,0 +1,14 @@
+Script started on 2019-04-21 16:59:28-0700
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 sudo insmod driver_setup.ko
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 sudo mknod dev/driver_setup c 237 0
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 cd /dev
+pproctor@pproctor-MacBook: /dev sudo chmod 777 driver_setup
+pproctor@pproctor-MacBook: /dev cd Documents/ECE373/hw2
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 ./tests
+Value read from driver: 40
+Value written to driver: 7
+Value read from driver: 7
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 exit
+exit
+
+Script done on 2019-04-21 17:01:34-0700

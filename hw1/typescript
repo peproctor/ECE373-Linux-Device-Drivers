@@ -1,0 +1,15 @@
+Script started on 2019-04-09 15:29:56-0700
+gcc -g -o temp_take temperature_conv.c 
+0;pproctor@pproctor-MacBook: ~/Documents/ECE373/hw01;32mpproctor@pproctor-MacBook~/Documents/ECE373/hw[00m$ ./temp_take
+Enter a temp in fahrenheit: 0
+
+You entered: 0 
+Value in celsius: -17.777779 
+]0;pproctor@pproctor-MacBook: ~/Documents/ECE373/hw01;32mpproctor@pproctor-MacBook~/Documents/ECE373/hw[00m$ ./temp_take
+Enter a temp in fahrenheit: 32
+
+You entered: 32 
+Value in celsius: 0.000000 
+]0;pproctor@pproctor-MacBook: ~/Documents/ECE373/hw01;32mpproctor@pproctor-MacBook~/Documents/ECE373/hw[00m$ exit
+
+Script done on 2019-04-09 15:31:00-0700

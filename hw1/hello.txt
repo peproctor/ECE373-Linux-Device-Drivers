@@ -1,0 +1,6 @@
+Apr 10 16:07:09 pproctor-MacBook /usr/lib/gdm3/gdm-x-session[1310]: (EE) event11 - bcm5974: libinput bug: invalid tap event TAP_EVENT_PALM in state TAP_STATE_TAPPED
+Apr 10 16:07:15 pproctor-MacBook systemd-resolved[643]: Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced feature level UDP.
+Apr 10 16:07:15 pproctor-MacBook systemd-resolved[643]: Server returned error NXDOMAIN, mitigating potential DNS violation DVE-2018-0001, retrying transaction with reduced feature level UDP.
+Apr 10 16:09:03 pproctor-MacBook pulseaudio[1051]: W: [pulseaudio] sink-input.c: Failed to create sink input: sink is suspended.
+Apr 10 16:10:40 pproctor-MacBook kernel: [ 9617.458732] Hello, kernel
+Apr 10 16:10:42 pproctor-MacBook kernel: [ 9619.673863] Goodbye, kernel

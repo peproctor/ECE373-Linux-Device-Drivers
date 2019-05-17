@@ -1,0 +1,29 @@
+Script started on 2019-04-22 12:35:52-0700
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 cd /proc
+pproctor@pproctor-MacBook: /proc vim devices 
+ 12  10 misc
+ 13  13 input
+ 14  21 sg
+ 15  29 fb
+ 16  81 video4linux
+ 17  89 i2c
+ 18  99 ppdev
+ 19 108 ppp
+ 20 116 alsa
+ 21 128 ptm
+ 22 136 pts
+ 23 180 usb
+ 24 189 usb_device
+ 25 204 ttyMAX
+ 26 216 rfcomm
+ 27 226 drm
+ 28 237 p_dev  <------****my module
+ 29 238 hidraw
+ 30 239 media
+ 31 240 aux
+ 32 241 iio
+ 33 242 mei 
+pproctor@pproctor-MacBook /procKexit
+exit
+
+Script done on 2019-04-22 12:36:19-0700

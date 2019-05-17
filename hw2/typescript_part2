@@ -1,0 +1,25 @@
+Script started on 2019-04-21 17:21:08-0700
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 cd /sys/module/driver_setup/parameters/
+pproctor@pproctor-MacBook: /sys/module/driver_setup/parameters sudo su
+[sudo] password for pproctor: 
+root@pproctor-MacBook: /sys/module/driver_setup/parameters cat input 
+40
+root@pproctor-MacBook: /sys/module/driver_setup/parameters echo 97 > input
+root@pproctor-MacBook: /sys/module/driver_setup/parameters cat input
+97
+root@pproctor-MacBook: /sys/module/driver_setup/parameters exit
+exit
+pproctor@pproctor-MacBook: cd Documents/ECE373/hw2
+pproctor@pproctor-MacBook: ~/Documents/ECE373/hw2 ./test_script
+Value read from driver: 97
+Value written to driver: 7
+Value read from driver: 7
+pproctor@pproctor-MacBook: cd /sys/module/driver_setup/parameters
+pproctor@pproctor-MacBook: /sys/module/driver_setup/parameters sudo su
+root@pproctor-MacBook: /sys/module/driver_setup/parameters cat input
+97
+root@pproctor-MacBook: /sys/module/driver_setup/parameters exit
+pproctor@pproctor-MacBook: exit
+exit
+
+Script done on 2019-04-21 17:23:04-0700
