@@ -1,11 +1,12 @@
 /*
  * Philippe Proctor
- * 4/28/2019
+ * 5/26/2019
  * ECE 373
  *
- * Hw 3 part 1: Setup driver for LED blinking
+ * Hw 5: Blinking ethernet controller LEDs with a timer.
  */
 
+#include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/types.h>
 #include <linux/kdev_t.h>
@@ -16,23 +17,26 @@
 #include <linux/pci.h>
 #include <linux/netdevice.h>
 #include <linux/device.h>
+#include <linux/timer.h>
+#include <linux/init.h>
+#include <linux/jiffies.h>
 
 #define DEVCNT 1
 #define DEVNAME "blink_driver"
 #define NODENAME "ece_led"
+#define LED_ON 0x0E
+#define LED_OFF 0x0F
+#define LED_REG 0xE00
 
 /*Start of private driver data struct, passed around inside driver*/
 
 /*Allows user to change param w/ in driver module*/
-
-static int blink_rate;
-static int init_blink_rate = 2;
-module_param(blink_rate, int, S_IRUSR);
-
+static int blink_rate = 2;
+unsigned long duration;
+module_param(blink_rate, int, S_IRUSR | S_IWUSR);
 char blink_driver_name[] = DEVNAME;
 
-
-/*structure definitions */
+/*Start of private driver data struct, passed around inside driver*/
 static struct mydev_dev {
         struct cdev cdev;
 	struct class *my_class;
@@ -50,10 +54,56 @@ static struct myPci {
 
 } myPci;
 
+//Timer struct 
+static struct timer_list my_timer;
+
+//Timer callback func
+void timer_blink(struct timer_list *list) {
+
+	/*LED register value */
+	mydev.led_reg = ioread32(myPci.hw_addr + LED_REG);
+	
+	if(mydev.led_reg == LED_ON) {
+		//Turn off LED0
+		iowrite32(LED_OFF, (myPci.hw_addr + LED_REG));
+	}
+	else {	
+		//Turn on LED0
+		iowrite32(LED_ON, (myPci.hw_addr + LED_REG));
+	}
+
+
+	/*Timer control*/ 
+	if(blink_rate < 0) {
+		printk_ratelimited(KERN_ERR "EINVAL\n");
+		mod_timer(&my_timer, jiffies + msecs_to_jiffies(duration));
+	}
+	else if(blink_rate == 0) {
+		mod_timer(&my_timer, jiffies + msecs_to_jiffies(duration));
+	}
+	else {
+		duration = (2*1000) / blink_rate;
+		mod_timer(&my_timer, jiffies + msecs_to_jiffies(duration));
+	
+	} 
+
+}
 
 static int blink_driver_open(struct inode *inode, struct file *file){
 	
-	mydev.syscall_val = init_blink_rate;
+	if(blink_rate <= 0) {
+		blink_rate = 2;
+	}	
+
+	/*Duration calculation to get 50% duty cycle */
+	duration = (2*1000) / blink_rate; 
+
+	//Starting timer at 1 second times 50% of the specified rate
+	mod_timer(&my_timer, jiffies + msecs_to_jiffies(duration));
+
+	//Turn on LED0
+	iowrite32(LED_ON, (myPci.hw_addr + LED_REG));
+	
 	return 0;
 
 }
@@ -64,9 +114,7 @@ static ssize_t blink_driver_read(struct file *file, char __user *buf, size_t len
 
 	/*Get local kernel buffer set aside */
 	int ret;
-
-	/*LED register value */
-	mydev.led_reg =  ioread32(myPci.hw_addr + 0xE00);
+	int *output_value = &blink_rate;
 
 	/*Safety check that offset is less than int */
 	if(*offset >= sizeof(int)){
@@ -81,7 +129,7 @@ static ssize_t blink_driver_read(struct file *file, char __user *buf, size_t len
 
 
 	/*Copy value from driver struct to user space */
-	if(copy_to_user(buf, &mydev.led_reg, sizeof(int))){
+	if(copy_to_user(buf, output_value, sizeof(int))){
 		ret = -EFAULT;
 		goto out;
 	}
@@ -90,7 +138,7 @@ static ssize_t blink_driver_read(struct file *file, char __user *buf, size_t len
 	ret = sizeof(int);
 	*offset += len;
 
-	printk(KERN_INFO "User got from us %lx\n", mydev.led_reg);
+	printk(KERN_INFO "Current blink rate: %d\n", blink_rate);
 
 out:
 	return ret;
@@ -103,7 +151,6 @@ static ssize_t blink_driver_write(struct file *file, const char __user *buf, siz
 	char *kern_buf;
 	int ret;
 
-//	printk(KERN_INFO "Inside write function");
 
 	/*Check if user passed null value to buffer*/
 	if(!buf){
@@ -114,7 +161,7 @@ static ssize_t blink_driver_write(struct file *file, const char __user *buf, siz
 	/*Get memory to copy into...*/
 	kern_buf = kmalloc(len, GFP_KERNEL);
 
-
+	/*Getting value from userspace to kernel space */
 	if(copy_from_user(kern_buf, buf, len)){
 		ret = -EFAULT;
 		goto mem_out;
@@ -122,12 +169,21 @@ static ssize_t blink_driver_write(struct file *file, const char __user *buf, siz
 
 	ret = len;
 	
-//	mydev.syscall_val = *kern_buf;
-	iowrite32(*kern_buf, (myPci.hw_addr + 0xE00));
+	if(*kern_buf < 0){
+		printk(KERN_ERR "EINVAL\n");
+		
+		}
+	else if(*kern_buf == 0){
+		printk("Blink rate set to default\n");
+		
+	}
+	else{	
+		printk("Blink rate set to %d \n", *kern_buf);
+		blink_rate = *kern_buf;
+	}
 
-	printk(KERN_INFO "Userspace wrote %lx to us\n",(unsigned long) *kern_buf );
+	printk(KERN_INFO "Userspace wrote %d to us\n", *kern_buf);
 
-	msleep(2000);
 
 mem_out:
 	kfree(kern_buf);
@@ -141,8 +197,6 @@ static int pci_blink_driver_probe(struct pci_dev *pdev, const struct pci_device_
 	
 	resource_size_t mmio_start, mmio_len;
 	unsigned long barMask;
-
-//	printk(KERN_INFO "Blink Driver PCI Probe called \n");
 
 	//Get BAR
 	barMask = pci_select_bars(pdev, IORESOURCE_MEM);
@@ -160,8 +214,6 @@ static int pci_blink_driver_probe(struct pci_dev *pdev, const struct pci_device_
 	mmio_start = pci_resource_start(pdev, 0);
 	mmio_len = pci_resource_len(pdev,0);
 	
-	printk(KERN_INFO "mmio start: %lx", (unsigned long) mmio_start);
-	printk(KERN_INFO "mmio len: %lx", (unsigned long) mmio_len);
 
 	if(!(myPci.hw_addr = ioremap(mmio_start, mmio_len))){
 		
@@ -170,8 +222,6 @@ static int pci_blink_driver_probe(struct pci_dev *pdev, const struct pci_device_
 	};
 
 	mydev.led_initial_val = ioread32(myPci.hw_addr + 0xE00);
-	printk(KERN_INFO "initial val is %lx\n", mydev.led_initial_val);
-
 	return 0;
 
 unregister_ioremap:
@@ -229,11 +279,10 @@ static int __init blink_driver_init(void) {
 		goto exit;
 	}
 
-	printk(KERN_INFO "Allocated %d devices at major:%d\n",DEVCNT, MAJOR(mydev.my_node));
-
+	/*Setup the timer*/
+	timer_setup(&my_timer, timer_blink, 0);
 
 	/*Initialize the char device and add it to the kernel*/
-
 	cdev_init(&mydev.cdev, &blink_driver_fops);
 	mydev.cdev.owner = THIS_MODULE;
 
@@ -287,11 +336,21 @@ static void __exit blink_driver_exit(void) {
 
 	/*Unregister PCI driver */
 	pci_unregister_driver(&pci_blink_driver);
+
+	/*destroy the device*/
+	device_destroy(mydev.my_class, mydev.my_node);
+
+	/*destroy the class*/
+	class_destroy(mydev.my_class);
+
 	/*destroy the cdev */
 	cdev_del(&mydev.cdev);
 
 	/*clean up the devices */
 	unregister_chrdev_region(mydev.my_node, DEVCNT);
+
+	/*Delete timer*/
+	del_timer_sync(&my_timer);
 
 	printk(KERN_INFO "%s module unloaded!\n", DEVNAME);
 }
